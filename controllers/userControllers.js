@@ -52,17 +52,17 @@ export const getSingleUser = asyncHandler(async (req, res) => {
  */
 
 export const createUser = asyncHandler(async (req, res) => {
-  let { name, email, password, gender, mobile } = req.body;
+  let { userName, email, password } = req.body;
 
   //Validation
-  if (!name || !email || !password || !gender || !mobile) {
+  if (!userName || !email || !password) {
     return res
       .status(400)
       .json({ success: false, message: "All user feilds are required ." });
   }
 
   //check email & mobile
-  let alreadyUser = await UserModel.findOne({ email, mobile });
+  let alreadyUser = await UserModel.findOne({ email });
 
   if (alreadyUser) {
     return res.status(400).json({
@@ -76,11 +76,9 @@ export const createUser = asyncHandler(async (req, res) => {
 
   //Create user
   let user = await UserModel.create({
-    name,
+    userName,
     email,
     password: hashedPassword,
-    gender,
-    mobile,
   });
   res.status(201).json({
     success: true,

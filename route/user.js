@@ -13,10 +13,9 @@ const router = express.Router();
 
 //verify User:
 
-router.use(verifyToken);
-
-//crete routes:
-router.route("/").get(getAllUsers).post(createUser);
+//crete routes: http://localhost:3232/api/v1/user/createUser
+router.route("/createUser").post(createUser);
+router.route("/getAllUsers").get(getAllUsers);
 
 router
   .route("/:id")
