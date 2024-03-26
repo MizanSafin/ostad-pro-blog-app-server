@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 /**
  *@Desc  user login
- *@route /api/v1/auth/login
+ *@route /api/v1/auth/login || http://localhost:3232/api/v1/auth/login
  *@method post
  *@access public
  */
@@ -42,7 +42,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   //create jwt token:
   let token = jwt.sign(
-    { email: loginUser.email },
+    { id: loginUser._id, email: loginUser.email },
     process.env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIREIN,
@@ -50,10 +50,12 @@ export const loginUser = asyncHandler(async (req, res) => {
   );
 
   //set token to cookie
-  res.cookie("accessToken", token);
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+  });
 
   //response token to user
-  res.status(200).json({ success: true, token });
+  return res.status(200).json({ success: true, token });
 });
 /**
  *@Desc  user logout

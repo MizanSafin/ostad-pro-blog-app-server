@@ -24,7 +24,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/auth", authRouter);
 
 //error handler middleware :
-app.use(errorHandler);
+// app.use(errorHandler);
 
 //export app
 export { app };

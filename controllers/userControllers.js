@@ -67,7 +67,7 @@ export const createUser = asyncHandler(async (req, res) => {
   if (alreadyUser) {
     return res.status(400).json({
       success: false,
-      message: "There is a user with thiss email or mobile number.",
+      message: "There is a user with this email or mobile number.",
     });
   }
 
@@ -80,7 +80,7 @@ export const createUser = asyncHandler(async (req, res) => {
     email,
     password: hashedPassword,
   });
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     message: " user has  created successfully ",
     user,
