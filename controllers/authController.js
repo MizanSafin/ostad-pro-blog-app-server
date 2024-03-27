@@ -48,14 +48,15 @@ export const loginUser = asyncHandler(async (req, res) => {
       expiresIn: process.env.ACCESS_TOKEN_EXPIREIN,
     }
   );
-
+  const { password: pass, ...rest } = loginUser._doc;
   //set token to cookie
   res.cookie("accessToken", token, {
     httpOnly: true,
   });
 
   //response token to user
-  return res.status(200).json({ success: true, token });
+  return res.status(200).json({ success: true, token, user: rest });
+  // return res.status(200).json(rest);
 });
 /**
  *@Desc  user logout
