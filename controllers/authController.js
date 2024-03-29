@@ -70,3 +70,57 @@ export const logOut = asyncHandler(async (req, res) => {
   //response token to user
   res.status(200).json({ success: true, message: "logout successfull ." });
 });
+
+export const googleAuth = async (req, res) => {
+  const { email, name, googlePhotoUrl } = req.body;
+
+  try {
+    const user = await UserModel.findOne({ email });
+    if (user) {
+      const token = jwt.sign(
+        { id: user._id, email: user.email },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      const { password, ...rest } = user._doc;
+      res
+        .status(200)
+        .cookie("accessToken", token, {
+          httpOnly: true,
+        })
+        .json({
+          success: true,
+          user: rest,
+        });
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcrypt.hashSync(generatedPassword, 10);
+      const newUser = new UserModel({
+        userName:
+          name.toLowerCase().split(" ").join("") +
+          Math.random().toString(9).slice(-4),
+        email,
+        password: hashedPassword,
+        profilePicture: googlePhotoUrl,
+      });
+      await newUser.save();
+      const token = jwt.sign(
+        { id: newUser._id, email },
+        process.env.ACCESS_TOKEN_SECRET
+      );
+      const { password, ...rest } = newUser._doc;
+      res
+        .status(200)
+        .cookie("accessToken", token, {
+          httpOnly: true,
+        })
+        .json({
+          success: true,
+          user: rest,
+        });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
