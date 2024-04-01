@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import UserModel from "../models/UserModel.js";
 import bcrypt from "bcrypt";
+import { logOut } from "./authController.js";
 /**
  *@Desc Get all users
  *@route /api/v1/user
@@ -15,7 +16,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
       .status(404)
       .json({ success: false, message: "No user is found ." });
   }
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "All users list ",
     count: users.length,
@@ -111,7 +112,7 @@ export const deleteSingleUser = asyncHandler(async (req, res) => {
  *@method put/patch
  *@access public
  */
-
+/*
 export const updateUser = asyncHandler(async (req, res) => {
   let { id } = req.params;
   let { name, email, password, gender, mobile } = req.body;
@@ -135,3 +136,72 @@ export const updateUser = asyncHandler(async (req, res) => {
     user,
   });
 });
+*/
+
+export const updateUser = async (req, res) => {
+  if (req.userId !== req.params.userId) {
+    return res.status(500).json({
+      success: false,
+      message: "You are not allowed to update this user",
+    });
+  }
+  if (req.body.password) {
+    if (req.body.password.length < 6) {
+      return res.status(500).json({
+        success: false,
+        message: "Password must be at least 6 characters",
+      });
+    }
+    req.body.password = bcrypt.hashSync(req.body.password, 10);
+  }
+  if (req.body.userName) {
+    if (req.body.userName.length < 7 || req.body.userName.length > 20) {
+      return res.status(500).json({
+        success: false,
+        message: "Username must be between 7 and 20 characters",
+      });
+    }
+    if (req.body.userName.includes(" ")) {
+      return res.status(500).json({
+        success: false,
+        message: "Username cannot contain spaces",
+      });
+    }
+    if (req.body.userName !== req.body.userName.toLowerCase()) {
+      return res.status(500).json({
+        success: false,
+        message: "Username must be lowercase",
+      });
+    }
+    if (!req.body.userName.match(/^[a-zA-Z0-9]+$/)) {
+      return res.status(500).json({
+        success: false,
+        message: "Username can only contain letters and numbers",
+      });
+    }
+  }
+  try {
+    const updatedUser = await UserModel.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          userName: req.body.userName,
+          email: req.body.email,
+          profilePicture: req.body.profilePicture,
+          password: req.body.password,
+        },
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updatedUser._doc;
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "User updated successfully",
+        data: rest,
+      });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
