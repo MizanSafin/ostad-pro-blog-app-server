@@ -194,14 +194,34 @@ export const updateUser = async (req, res) => {
       { new: true }
     );
     const { password, ...rest } = updatedUser._doc;
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "User updated successfully",
-        data: rest,
-      });
+    res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      data: rest,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    if (req.userId !== req.params.userId) {
+      res.status(500).json({
+        success: false,
+        message: "You are not allowed to delete this account.",
+      });
+    }
+    let deletedUser = await UserModel.findByIdAndDelete(req.params.userId);
+    res.status(200).json({
+      success: true,
+      deletedUser,
+      message: "User deleted successfully .!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 const verifyUser = expressAsyncHandler((req, res, next) => {
   let token = req.cookies.accessToken;
+
   if (!token) {
     return res.status(404).send(`Unauthorized`);
   }
@@ -12,6 +13,7 @@ const verifyUser = expressAsyncHandler((req, res, next) => {
       return res.status(404).send(`Unauthorized`);
     }
     req.userId = decoded["id"];
+
     next();
   });
 });

@@ -2,6 +2,7 @@ import express from "express";
 import {
   createUser,
   deleteSingleUser,
+  deleteUser,
   getAllUsers,
   getSingleUser,
   updateUser,
@@ -12,10 +13,11 @@ import verifyUser from "../middlewares/verifyUser.js";
 const router = express.Router();
 
 //verify User:
-router.use(verifyUser);
 
 router.get("/getAllUsers", getAllUsers);
-router.post("/updateUser/:userId", updateUser);
+router.post("/createUser", createUser);
+router.post("/updateUser/:userId", verifyUser, updateUser);
+router.delete("/deleteUser/:userId", verifyUser, deleteUser);
 //crete routes: http://localhost:3232/api/v1/user/createUser
 // router.route("/createUser").post(createUser);
 // router.route("/getAllUsers").get(getAllUsers);
