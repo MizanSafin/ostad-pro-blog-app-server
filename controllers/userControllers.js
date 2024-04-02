@@ -204,6 +204,13 @@ export const updateUser = async (req, res) => {
   }
 };
 
+/**
+ *@Desc delete user
+ *@route /api/v1/user/deleteUser/:id // http://localhost:3232/api/v1/user/deleteUser/:id
+ *@method put/patch
+ *@access public
+ */
+
 export const deleteUser = async (req, res) => {
   try {
     if (req.userId !== req.params.userId) {
