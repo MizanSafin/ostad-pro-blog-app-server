@@ -207,8 +207,8 @@ export const updateUser = async (req, res) => {
 /**
  *@Desc delete user
  *@route /api/v1/user/deleteUser/:id // http://localhost:3232/api/v1/user/deleteUser/:id
- *@method put/patch
- *@access public
+ *@method delete
+ *@access user
  */
 
 export const deleteUser = async (req, res) => {
@@ -230,5 +230,23 @@ export const deleteUser = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+/**
+ *@Desc delete user
+ *@route /api/v1/user/signOut
+ *@method get
+ *@access public
+ */
+
+export const signOut = (req, res) => {
+  try {
+    res.clearCookie("accessToken").status(200).json({
+      success: true,
+      message: "Sign out successfully!",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: "signout failed" });
   }
 };
