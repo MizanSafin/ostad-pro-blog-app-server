@@ -42,7 +42,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   //create jwt token:
   let token = jwt.sign(
-    { id: loginUser._id, email: loginUser.email },
+    { id: loginUser._id, email: loginUser.email, isAdmin: loginUser.isAdmin },
     process.env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: process.env.ACCESS_TOKEN_EXPIREIN,
@@ -78,7 +78,7 @@ export const googleAuth = async (req, res) => {
     const user = await UserModel.findOne({ email });
     if (user) {
       const token = jwt.sign(
-        { id: user._id, email: user.email },
+        { id: user._id, email: user.email, isAdmin: user.isAdmin },
         process.env.ACCESS_TOKEN_SECRET
       );
       const { password, ...rest } = user._doc;
@@ -106,7 +106,7 @@ export const googleAuth = async (req, res) => {
       });
       await newUser.save();
       const token = jwt.sign(
-        { id: newUser._id, email },
+        { id: user._id, email, isAdmin: user.isAdmin },
         process.env.ACCESS_TOKEN_SECRET
       );
       const { password, ...rest } = newUser._doc;
