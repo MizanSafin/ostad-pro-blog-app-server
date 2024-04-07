@@ -3,11 +3,11 @@ import jwt from "jsonwebtoken";
 import UserModel from "../models/UserModel.js";
 
 const verifyToken = expressAsyncHandler(async (req, res, next) => {
-  let authHeader = req.headers.authorization;
-  if (!authHeader) {
+  let token = req.cookies.accessToken;
+  if (!token) {
     return res.status(400).json({ message: "Unauthorized." });
   }
-  let token = authHeader.split(" ")[1];
+  // let token = authHeader.split(" ")[1];
 
   jwt.verify(
     token,
@@ -16,7 +16,8 @@ const verifyToken = expressAsyncHandler(async (req, res, next) => {
       if (error) {
         return res.status(400).json({ message: "Invalid token ." });
       }
-      let user = await UserModel.find({ email: decode.email });
+      let user = await UserModel.findOne({ email: decode.email });
+      console.log(user);
       req.user = user;
       next();
     })
