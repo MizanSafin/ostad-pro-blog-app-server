@@ -1,5 +1,12 @@
 import PostModel from "../models/PostModel.js";
 
+/**
+ *@Desc create  post
+ *@route  http://localhost:3232/api/v1/post/create-post
+ *@method post
+ *@access public
+ */
+
 export const createPost = async (req, res) => {
   console.log(req.user.isAdmin);
   try {
