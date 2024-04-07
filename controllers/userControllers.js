@@ -235,7 +235,7 @@ export const deleteUser = async (req, res) => {
 
 /**
  *@Desc delete user
- *@route /api/v1/user/signOut
+ *@route /api/v1/user/signOut http://localhost:3232/api/v1/user/signOut
  *@method get
  *@access public
  */
