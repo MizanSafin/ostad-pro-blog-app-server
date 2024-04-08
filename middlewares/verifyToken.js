@@ -17,7 +17,7 @@ const verifyToken = expressAsyncHandler(async (req, res, next) => {
         return res.status(400).json({ message: "Invalid token ." });
       }
       let user = await UserModel.findOne({ email: decode.email });
-      console.log(user);
+
       req.user = user;
       next();
     })
