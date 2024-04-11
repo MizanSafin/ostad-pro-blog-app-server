@@ -1,3 +1,4 @@
+import { trusted } from "mongoose";
 import PostModel from "../models/PostModel.js";
 
 /**
@@ -8,7 +9,7 @@ import PostModel from "../models/PostModel.js";
  */
 
 export const createPost = async (req, res) => {
-  console.log(req.user.isAdmin);
+  // console.log(req.user.isAdmin);
   try {
     if (!req.user.isAdmin) {
       return res.status(403).json({
@@ -102,7 +103,7 @@ export const getPost = async (req, res) => {
  */
 
 export const deletePost = async (req, res) => {
-  console.log(req.user._id !== req.params.userId);
+  // console.log(req.user._id !== req.params.userId);
   if (!req.user.isAdmin || !(req.user._id !== req.params.userId)) {
     return res.status(500).json({
       success: false,
@@ -121,5 +122,46 @@ export const deletePost = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Error in deleting post / " + error.message });
+  }
+};
+
+/**
+ *@Desc   update-post
+ *@route  http://localhost:3232/api/v1/post/update-post/:userId/:postId
+ *@method post
+ *@access admin
+ */
+
+export const updatePost = async (req, res) => {
+  if (!req.user.isAdmin || !(req.user._id !== req.params.userId)) {
+    return res.status(500).json({
+      success: false,
+      message: "unauthorized .",
+    });
+  }
+
+  try {
+    let updatedPost = await PostModel.findByIdAndUpdate(
+      req.params.postId,
+      {
+        $set: {
+          title: req.body.title,
+          category: req.body.category,
+          image: req.body.image,
+          content: req.body.content,
+        },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "post updated successfully .",
+      updatedPost,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
   }
 };
