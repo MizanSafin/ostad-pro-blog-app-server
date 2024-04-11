@@ -52,7 +52,7 @@ export const createPost = async (req, res) => {
 export const getPost = async (req, res) => {
   try {
     let startIndex = parseInt(req.query.startIndex) || 0;
-    let limit = parseInt(req.query.limit) || 9;
+    let limit = parseInt(req.query.limit) || 3;
     let sortDirection = req.query.order === "asc" ? 1 : -1;
     let posts = await PostModel.find({
       ...(req.query.userId && { userId: req.query.userId }),
@@ -90,5 +90,36 @@ export const getPost = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({});
+  }
+};
+
+//delete single post by id
+/**
+ *@Desc delete post
+ *@route  http://localhost:3232/api/v1/post/delete-post/:userId/:postId
+ *@method get
+ *@access admin
+ */
+
+export const deletePost = async (req, res) => {
+  console.log(req.user._id !== req.params.userId);
+  if (!req.user.isAdmin || !(req.user._id !== req.params.userId)) {
+    return res.status(500).json({
+      success: false,
+      message: "unauthorized .",
+    });
+  }
+  let query = { _id: req.params.postId };
+  try {
+    let deletedPost = await PostModel.findByIdAndDelete(query);
+    return res.status(200).json({
+      success: true,
+      message: "Post is deleted successfully .",
+      deletedPost,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Error in deleting post / " + error.message });
   }
 };
