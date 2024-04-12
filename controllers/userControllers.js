@@ -89,6 +89,57 @@ export const createUser = asyncHandler(async (req, res) => {
 });
 
 /**
+ *@Desc get user
+ *@route /api/v1/user/get-users
+ *@method get
+ *@access admin
+ */
+
+export const getUsers = async (req, res) => {
+  if (!req.user.isAdmin) {
+    return res.status(500).json({ status: "failed", message: "Unauthorized" });
+  }
+  try {
+    let startIndex = parseInt(req.query.startIndex) || 0;
+    let limit = parseInt(req.query.limit) || 3;
+    let sortDirection = req.query.order === "asc" ? 1 : -1;
+    let users = await UserModel.find({})
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+    //total users count :
+    let totalUsers = await UserModel.countDocuments();
+
+    //user list Without Password
+    let usersWithoutPassword = users.map((user) => {
+      const { password, ...rest } = user._doc;
+      return rest;
+    });
+
+    //last month total users :
+    let now = new Date();
+    let oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
+
+    let lastMonthUsers = await UserModel.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+
+    return res.send({
+      success: true,
+      lastMonthUsers,
+      totalUsers,
+      users: usersWithoutPassword,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "failed", message: error.message });
+  }
+};
+
+/**
  *@Desc delete single user
  *@route /api/v1/user/:id
  *@method delte
@@ -112,31 +163,6 @@ export const deleteSingleUser = asyncHandler(async (req, res) => {
  *@method put/patch
  *@access public
  */
-/*
-export const updateUser = asyncHandler(async (req, res) => {
-  let { id } = req.params;
-  let { name, email, password, gender, mobile } = req.body;
-
-  if (!name || !email || !password || !gender || !mobile) {
-    return res
-      .status(400)
-      .json({ success: false, message: "All user feilds are required ." });
-  }
-
-  let hashedPassword = bcrypt.hashSync(password, 10);
-
-  let user = await UserModel.findByIdAndUpdate(
-    id,
-    { name, email, password: hashedPassword, gender, mobile },
-    { new: true }
-  );
-  res.status(201).json({
-    success: true,
-    message: " user has  updated successfully ",
-    user,
-  });
-});
-*/
 
 export const updateUser = async (req, res) => {
   if (req.userId !== req.params.userId) {
@@ -234,7 +260,7 @@ export const deleteUser = async (req, res) => {
 };
 
 /**
- *@Desc delete user
+ *@Desc signout user
  *@route /api/v1/user/signOut http://localhost:3232/api/v1/user/signOut
  *@method get
  *@access public
