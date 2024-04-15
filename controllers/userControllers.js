@@ -237,6 +237,36 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+//deleteUserByAdmin
+/**
+ *@Desc delete user
+ *@route /api/v1/user/delete/:adminId // http://localhost:3232/api/v1/user/delete/:AdminId
+ *@method get
+ *@access user
+ */
+
+export const deleteUserByAdmin = async (req, res) => {
+  try {
+    if (!req.user.isAdmin && req.user._id !== req.params.adminId) {
+      res.status(500).json({
+        success: false,
+        message: "You are not allowed to delete this account.",
+      });
+    }
+    let deletedUser = await UserModel.findByIdAndDelete(req.params.adminId);
+    res.status(200).json({
+      success: true,
+      deletedUser,
+      message: "User deleted successfully .!",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 /**
  *@Desc signout user
  *@route /api/v1/user/signOut http://localhost:3232/api/v1/user/signOut
