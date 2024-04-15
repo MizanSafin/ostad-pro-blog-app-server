@@ -1,28 +1,6 @@
 import asyncHandler from "express-async-handler";
 import UserModel from "../models/UserModel.js";
 import bcrypt from "bcrypt";
-import { logOut } from "./authController.js";
-/**
- *@Desc Get all users
- *@route /api/v1/user
- *@method get
- *@access public
- */
-
-export const getAllUsers = asyncHandler(async (req, res) => {
-  let users = await UserModel.find({});
-  if (users.length === 0) {
-    return res
-      .status(404)
-      .json({ success: false, message: "No user is found ." });
-  }
-  return res.status(200).json({
-    success: true,
-    message: "All users list ",
-    count: users.length,
-    users,
-  });
-});
 
 /**
  *@Desc Get single user
