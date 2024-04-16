@@ -90,7 +90,7 @@ export const getPost = async (req, res) => {
       posts,
     });
   } catch (error) {
-    res.status(500).json({});
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
