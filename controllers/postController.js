@@ -103,7 +103,6 @@ export const getPost = async (req, res) => {
  */
 
 export const deletePost = async (req, res) => {
-  // console.log(req.user._id !== req.params.userId);
   if (!req.user.isAdmin || !(req.user._id !== req.params.userId)) {
     return res.status(500).json({
       success: false,

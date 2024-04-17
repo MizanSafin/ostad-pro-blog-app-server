@@ -4,6 +4,7 @@ import cors from "cors";
 import userRouter from "./route/user.js";
 import authRouter from "./route/auth.js";
 import postRouter from "./route/post.js";
+import commentRouter from "./route/comments.js";
 
 //Initialize app
 const app = express();
@@ -23,6 +24,7 @@ app.use(
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/post", postRouter);
+app.use("/api/v1/comment", commentRouter);
 
 //error handler middleware :
 // app.use(errorHandler);
