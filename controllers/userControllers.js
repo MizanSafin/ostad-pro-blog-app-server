@@ -118,6 +118,35 @@ export const getUsers = async (req, res) => {
 };
 
 /**
+ *@Desc get user
+ *@route http://localhost:3232/api/v1/user/get-user/:userId
+ *@method get
+ *@access public
+ */
+
+export const getUser = async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ _id: req.params.userId });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });
+    }
+    const { password, ...rest } = user._doc;
+
+    return res.status(200).json({
+      success: true,
+      user: rest,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+/**
  *@Desc delete single user
  *@route /api/v1/user/:id
  *@method delte

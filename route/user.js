@@ -4,6 +4,7 @@ import {
   deleteUser,
   deleteUserByAdmin,
   getSingleUser,
+  getUser,
   getUsers,
   signOut,
   updateUser,
@@ -21,6 +22,7 @@ router.post("/updateUser/:userId", verifyUser, updateUser);
 router.delete("/deleteUser/:userId", verifyUser, deleteUser);
 router.get("/signOut", signOut);
 router.get("/get-users", verifyToken, getUsers);
+router.get("/get-user/:userId", getUser);
 router.get("/delete/:adminId", verifyToken, deleteUserByAdmin);
 
 // export router

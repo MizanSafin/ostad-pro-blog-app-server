@@ -42,7 +42,7 @@ export const createComment = async (req, res) => {
 export const getComments = async (req, res) => {
   try {
     const { postId } = req.params;
-    let comments = await CommentModel.find({ postId }).sort({ createAt: -1 });
+    let comments = await CommentModel.find({ postId }).sort({ createdAt: -1 });
     return res.status(200).json({
       success: true,
       message: "Successfully get post comments",
