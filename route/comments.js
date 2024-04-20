@@ -1,15 +1,17 @@
-import express from "express";
-import verifyToken from "../middlewares/verifyToken.js";
+import express from "express"
+import verifyToken from "../middlewares/verifyToken.js"
 import {
   createComment,
   getComments,
   likeComment,
-} from "../controllers/commentController.js";
+  updateComment,
+} from "../controllers/commentController.js"
 
-const router = express.Router();
+const router = express.Router()
 
-router.post("/create-comment", verifyToken, createComment);
-router.get("/get-comments/:postId", getComments);
-router.get("/like-comment/:commentId", verifyToken, likeComment);
+router.post("/create-comment", verifyToken, createComment)
+router.get("/get-comments/:postId", getComments)
+router.get("/like-comment/:commentId", verifyToken, likeComment)
+router.post("/update-comment/:commentId", verifyToken, updateComment)
 
-export default router;
+export default router
