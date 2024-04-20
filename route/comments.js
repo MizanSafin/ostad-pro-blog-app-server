@@ -2,6 +2,7 @@ import express from "express"
 import verifyToken from "../middlewares/verifyToken.js"
 import {
   createComment,
+  deleteComment,
   getComments,
   likeComment,
   updateComment,
