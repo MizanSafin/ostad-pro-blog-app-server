@@ -13,5 +13,6 @@ router.post("/create-comment", verifyToken, createComment)
 router.get("/get-comments/:postId", getComments)
 router.get("/like-comment/:commentId", verifyToken, likeComment)
 router.post("/update-comment/:commentId", verifyToken, updateComment)
+router.delete("/delete-comment/:commentId", verifyToken, deleteComment)
 
 export default router

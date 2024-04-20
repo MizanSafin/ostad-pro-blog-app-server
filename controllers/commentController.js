@@ -96,7 +96,7 @@ export const likeComment = async (req, res) => {
  *@Desc  update comment
  *@route http://localhost:3232/api/v1/comment/update-comment/:commentId
  *@method post
- *@access public
+ *@access admin
  */
 
 export const updateComment = async (req, res) => {
@@ -109,7 +109,7 @@ export const updateComment = async (req, res) => {
         message: "comment not found .",
       })
     }
-    if (comment.userId !== req.user.id) {
+    if (comment.userId !== req.user.id && !req.user.isAdmin) {
       return res.status(404).json({
         success: false,
         message: "Not allowed to comment .",
@@ -126,6 +126,35 @@ export const updateComment = async (req, res) => {
     res.status(200).json({
       success: true,
       updatedComment,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    })
+  }
+}
+
+/**
+ *@Desc  delete comment
+ *@route http://localhost:3232/api/v1/comment/delete-comment/:commentId
+ *@method delete
+ *@access admin
+ */
+
+export const deleteComment = async (req, res) => {
+  try {
+    let comment = await CommentModel.findById(req.params.commentId)
+    if (comment.userId !== req.user.id && !req.user.isAdmin) {
+      return res.status(500).json({
+        success: false,
+        message: "Not allowed to delete .",
+      })
+    }
+
+    await CommentModel.findByIdAndDelete(req.params.commentId)
+    res.status(200).json({
+      success: true,
+      message: "Comment deleted uccessfully.",
     })
   } catch (error) {
     return res.status(500).json({
