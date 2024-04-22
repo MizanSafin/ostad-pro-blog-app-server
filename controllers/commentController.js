@@ -162,3 +162,53 @@ export const deleteComment = async (req, res) => {
     })
   }
 }
+
+/**
+ *@Desc  get all Comments
+ *@route http://localhost:3232/api/v1/comment/get-all-comments
+ *@method get
+ *@access admin
+ */
+
+export const getAllComments = async (req, res) => {
+  if (!req.user.isAdmin) {
+    return res.status(500).json({ success: false, message: "Unauthorized ." })
+  }
+  try {
+    let startIndex = parseInt(req.query.startIndex || 0)
+    let limit = parseInt(req.query.limit || 3)
+    let sortDirection = req.query.sort === "asc" ? 1 : -1
+
+    let comments = await CommentModel.find()
+      .sort({
+        createdAt: sortDirection,
+      })
+      .skip(startIndex)
+      .limit(limit)
+
+    let totalComments = await CommentModel.countDocuments()
+
+    let now = new Date()
+
+    let oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    )
+
+    let lastMonthComments = await CommentModel.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    })
+
+    res.status(200).json({
+      success: true,
+      comments,
+      totalComments,
+      lastMonthComments,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message,
+    })
+  }
+}
